@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:6.0
+    container_name: calorie_tracker_mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: healthyfoodapp
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  # Backend FastAPI service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: calorie_tracker_backend
+    restart: unless-stopped
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/healthyfoodapp
+      - SECRET_KEY=your-secret-key-here-change-in-production
+      - ENVIRONMENT=production
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./backend:/app
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+
+networks:
+  app-network:
+    driver: bridge

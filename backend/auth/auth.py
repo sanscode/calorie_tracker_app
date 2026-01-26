@@ -6,10 +6,14 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from dotenv import load_dotenv
 import os
-from backend.models.user import User
-from backend.main import db
+from models.user import User
+from pymongo import MongoClient
 
 load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.healthyfoodapp
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"

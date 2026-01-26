@@ -1,10 +1,18 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
-from backend.models.calorie_log import CalorieLog, PyObjectId
-from backend.models.food_item import FoodItem
-from backend.main import db
-from backend.auth.auth import get_current_user
-from backend.services.diet_plan_service import calculate_diet_plan_calories # This import is not directly used here, but will be useful for future logic.
+from models.calorie_log import CalorieLog, PyObjectId
+from models.food_item import FoodItem
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.healthyfoodapp
+from auth.auth import get_current_user
+from services.diet_plan_service import calculate_diet_plan_calories # This import is not directly used here, but will be useful for future logic.
 from bson import ObjectId
 from datetime import date
 

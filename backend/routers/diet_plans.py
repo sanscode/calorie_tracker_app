@@ -1,10 +1,28 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
-from backend.models.diet_plan import DietPlan, Meal, PyObjectId
-from backend.models.food_item import FoodItem
-from backend.main import db
-from backend.auth.auth import get_current_user
+from models.diet_plan import DietPlan, Meal, PyObjectId
+from models.food_item import FoodItem
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.healthyfoodapp
+from auth.auth import get_current_user
 from bson import ObjectId
+
+async def validate_diet_plan(diet_plan: DietPlan) -> bool:
+    """Validate diet plan data."""
+    if not diet_plan.name or not diet_plan.description:
+        return False
+    if diet_plan.target_calories <= 0 or diet_plan.target_protein <= 0:
+        return False
+    if diet_plan.target_carbs <= 0 or diet_plan.target_fat <= 0:
+        return False
+    return True
 
 router = APIRouter(
     prefix="/diet-plans",

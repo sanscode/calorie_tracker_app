@@ -2,9 +2,9 @@ from fastapi import FastAPI, HTTPException, status
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
-from backend.routers import auth, food_items, diet_plans, calorie_logs
-from backend.models.user import User
-from backend.auth.auth import get_password_hash, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
+from routers import auth, food_items, diet_plans, calorie_logs
+from models.user import User
+from auth.auth import get_password_hash, create_access_token, ACCESS_TOKEN_EXPIRE_MINUTES
 from datetime import timedelta
 
 load_dotenv()

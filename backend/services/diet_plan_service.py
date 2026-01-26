@@ -1,7 +1,15 @@
 from typing import List
-from backend.models.diet_plan import DietPlan, Meal
-from backend.models.food_item import FoodItem
-from backend.main import db
+from models.diet_plan import DietPlan, Meal
+from models.food_item import FoodItem
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.healthyfoodapp
 from bson import ObjectId
 
 async def calculate_diet_plan_calories(diet_plan: DietPlan) -> float:

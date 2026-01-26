@@ -1,8 +1,16 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
-from backend.models.food_item import FoodItem, PyObjectId
-from backend.main import db
-from backend.auth.auth import get_current_user
+from models.food_item import FoodItem, PyObjectId
+from pymongo import MongoClient
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+client = MongoClient(MONGO_URI)
+db = client.healthyfoodapp
+from auth.auth import get_current_user
 from bson import ObjectId
 
 router = APIRouter(
