@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
 from pymongo import MongoClient
@@ -10,6 +11,15 @@ from datetime import timedelta
 load_dotenv()
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
@@ -35,10 +45,13 @@ async def register_user(user: User):
             detail="Email already registered"
         )
 
+    # Hash the password before storing
     hashed_password = get_password_hash(user.hashed_password)
-    user.hashed_password = hashed_password
     
+    # Create user dict and update the password
     user_dict = user.dict(by_alias=True, exclude_unset=True)
+    user_dict["hashed_password"] = hashed_password
+    
     db.users.insert_one(user_dict)
 
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

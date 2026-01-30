@@ -18,9 +18,7 @@ services:
 
   # Backend FastAPI service
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: calorie_tracker_backend:latest
     container_name: calorie_tracker_backend
     restart: unless-stopped
     environment:

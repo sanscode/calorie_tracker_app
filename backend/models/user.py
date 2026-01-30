@@ -18,7 +18,7 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 class User(BaseModel):
-    id: Optional[PyObjectId] = Field(alias="_id")
+    id: Optional[PyObjectId] = Field(default=None, alias="_id")
     username: str
     email: str
     hashed_password: str
