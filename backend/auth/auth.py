@@ -50,7 +50,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 async def get_user(username: str):
     user_data = db.users.find_one({"username": username})
     if user_data:
-        return User(**user_data)
+        # Convert ObjectId to string for Pydantic validation
+        user_data["_id"] = str(user_data["_id"])
+        # Remove _id from user_data to avoid conflict with id field
+        user_dict = {k: v for k, v in user_data.items() if k != "_id"}
+        user_dict["id"] = user_data["_id"]
+        return User(**user_dict)
     return None
 
 async def authenticate_user(username: str, password: str):

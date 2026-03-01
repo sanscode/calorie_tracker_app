@@ -23,7 +23,7 @@ class Meal(BaseModel):
     quantity: float # e.g., grams, number of servings
 
 class DietPlan(BaseModel):
-    id: Optional[PyObjectId] = Field(alias="_id")
+    id: Optional[PyObjectId] = Field(default=None,alias="_id")
     user_id: PyObjectId
     name: str
     target_calories: float

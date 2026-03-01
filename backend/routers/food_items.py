@@ -31,7 +31,12 @@ async def create_food_item(food_item: FoodItem, current_user: str = Depends(get_
 async def get_all_food_items(current_user: str = Depends(get_current_user)):
     food_items = []
     for item in db.food_items.find():
-        food_items.append(FoodItem(**item))
+        # Convert ObjectId to string for Pydantic validation
+        item["_id"] = str(item["_id"])
+        # Remove _id from item to avoid conflict with id field
+        item_dict = {k: v for k, v in item.items() if k != "_id"}
+        item_dict["id"] = item["_id"]
+        food_items.append(FoodItem(**item_dict))
     return food_items
 
 @router.get("/{id}", response_model=FoodItem)

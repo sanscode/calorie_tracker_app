@@ -19,7 +19,7 @@ class PyObjectId(ObjectId):
         field_schema.update(type="string")
 
 class CalorieLog(BaseModel):
-    id: Optional[PyObjectId] = Field(alias="_id")
+    id: Optional[PyObjectId] = Field(default=None,alias="_id")
     user_id: PyObjectId
     food_item_id: PyObjectId
     quantity: float

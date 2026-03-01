@@ -43,8 +43,13 @@ async def create_diet_plan(diet_plan: DietPlan, current_user: str = Depends(get_
 @router.get("/", response_model=List[DietPlan])
 async def get_all_diet_plans(current_user: str = Depends(get_current_user)):
     diet_plans = []
-    for plan in db.diet_plans.find({"user_id": ObjectId(current_user.id)}):
-        diet_plans.append(DietPlan(**plan))
+    for plan in db.diet_plans.find():
+        # Convert ObjectId to string for Pydantic validation
+        plan["_id"] = str(plan["_id"])
+        # Remove _id from plan to avoid conflict with id field
+        plan_dict = {k: v for k, v in plan.items() if k != "_id"}
+        plan_dict["id"] = plan["_id"]
+        diet_plans.append(DietPlan(**plan_dict))
     return diet_plans
 
 @router.get("/{id}", response_model=DietPlan)

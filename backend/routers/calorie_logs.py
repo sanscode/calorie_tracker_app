@@ -41,8 +41,13 @@ async def create_calorie_log(calorie_log: CalorieLog, current_user: str = Depend
 @router.get("/", response_model=List[CalorieLog])
 async def get_all_calorie_logs(current_user: str = Depends(get_current_user)):
     calorie_logs = []
-    for log in db.calorie_logs.find({"user_id": ObjectId(current_user.id)}):
-        calorie_logs.append(CalorieLog(**log))
+    for log in db.calorie_logs.find():
+        # Convert ObjectId to string for Pydantic validation
+        log["_id"] = str(log["_id"])
+        # Remove _id from log to avoid conflict with id field
+        log_dict = {k: v for k, v in log.items() if k != "_id"}
+        log_dict["id"] = log["_id"]
+        calorie_logs.append(CalorieLog(**log_dict))
     return calorie_logs
 
 @router.get("/daily/{log_date}", response_model=List[CalorieLog])
